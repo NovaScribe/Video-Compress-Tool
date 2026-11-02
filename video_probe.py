@@ -12,12 +12,19 @@ def _fraction_to_float(value):
     except (ValueError, AttributeError, ZeroDivisionError):
         return 0.0
 
+def _bitrate_to_int(value):
+    try:
+        bitrate = int(value)
+    except (TypeError, ValueError):
+        return None
+    return bitrate if bitrate > 0 else None
+
 def probe_video(path: Path) -> dict:
     command = [
         "ffprobe", "-v", "error",
         "-select_streams", "v:0",
         "-show_entries",
-        "stream=width,height,avg_frame_rate,r_frame_rate:stream_tags=rotate:stream_side_data=rotation",
+        "stream=width,height,avg_frame_rate,r_frame_rate,bit_rate:stream_tags=rotate:stream_side_data=rotation",
         "-of", "json", str(path),
     ]
     result = subprocess.run(command, capture_output=True, text=True, check=True)
@@ -55,6 +62,7 @@ def probe_video(path: Path) -> dict:
         "width": width,
         "height": height,
         "fps": fps,
+        "bitrate": _bitrate_to_int(stream.get("bit_rate")),
         "orientation": orientation,
         "reduce_fps": fps > FPS_THRESHOLD,
     }

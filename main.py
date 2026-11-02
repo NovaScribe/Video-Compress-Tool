@@ -4,7 +4,7 @@ import logging
 import shutil
 import sys
 
-from config import INPUT_EXTENSIONS, OUTPUT_DIR, FPS_TARGET, RECURSIVE
+from config import INPUT_EXTENSIONS, OUTPUT_DIR, FPS_TARGET, MIN_BITRATE, RECURSIVE
 from video_probe import probe_video
 from compressor import compress_video
 
@@ -54,9 +54,25 @@ def main():
     logging.info("Found %d video(s). Output: %s", len(videos), output_dir)
 
     success = 0
+    skipped = 0
     for index, video in enumerate(videos, 1):
         try:
             info = probe_video(video)
+            bitrate = info["bitrate"]
+            if bitrate is None:
+                logging.info("[%d/%d] %s | bitrate unavailable; skipping conversion.",
+                             index, len(videos), video.name)
+                skipped += 1
+                continue
+            if bitrate <= MIN_BITRATE:
+                logging.info(
+                    "[%d/%d] %s | bitrate %.2f Mbps is not above 10 Mbps; "
+                    "skipping conversion.",
+                    index, len(videos), video.name, bitrate / 1_000_000,
+                )
+                skipped += 1
+                continue
+
             destination = output_dir / f"{video.stem}_compressed.mp4"
             # Avoid overwriting previous results, including same-stem input files.
             suffix = 2
@@ -71,8 +87,8 @@ def main():
         except Exception:
             logging.exception("Failed to process: %s", video)
 
-    logging.info("Finished: %d/%d videos compressed successfully.",
-                 success, len(videos))
+    logging.info("Finished: %d/%d videos compressed successfully; %d skipped.",
+                 success, len(videos), skipped)
 
 if __name__ == "__main__":
     main()

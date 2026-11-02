@@ -8,6 +8,7 @@ PORTRAIT_MAX = (1080, 1920)
 # Applied only when the source frame rate is greater than 32 FPS.
 FPS_THRESHOLD = 32.0
 FPS_TARGET = 30  # Change to 24, or use: python main.py FOLDER --fps 24
+MIN_BITRATE = 10_000_000
 
 # Conservative starting bitrates for low-bitrate 1080p HEVC.
 # Increase these if fine detail or fast motion looks too soft.

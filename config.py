@@ -6,23 +6,22 @@ LANDSCAPE_MAX = (1920, 1080)
 PORTRAIT_MAX = (1080, 1920)
 
 # Applied only when the source frame rate is greater than 32 FPS.
-FPS_THRESHOLD = 32.0
+FPS_THRESHOLD = 62
 FPS_TARGET = 30  # Change to 24, or use: python main.py FOLDER --fps 24
 MIN_BITRATE = 10_000_000
 
-# Conservative starting bitrates for low-bitrate 1080p HEVC.
-# Increase these if fine detail or fast motion looks too soft.
+# Target and peak bitrates for 1080p HEVC.
 VIDEO_BITRATE = {
-    "horizontal": "2M",
-    "vertical": "1.5M",
+    "horizontal": "8M",
+    "vertical": "6M",
 }
 MAX_BITRATE = {
-    "horizontal": "3M",
-    "vertical": "2.25M",
+    "horizontal": "12M",
+    "vertical": "10M",
 }
 BUFFER_SIZE = {
-    "horizontal": "4M",
-    "vertical": "3M",
+    "horizontal": "16M",
+    "vertical": "12M",
 }
 
 AUDIO_BITRATE = "256k"

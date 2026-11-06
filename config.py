@@ -1,5 +1,3 @@
-from pathlib import Path
-
 # Output sizing: maximum 1920x1080 landscape or 1080x1920 portrait.
 # Aspect ratio is preserved and smaller videos are not upscaled.
 LANDSCAPE_MAX = (1920, 1080)
@@ -33,5 +31,4 @@ INPUT_EXTENSIONS = {
     ".mp4", ".mkv", ".mov", ".avi", ".wmv", ".flv",
     ".webm", ".m4v", ".mpg", ".mpeg", ".ts", ".mts"
 }
-OUTPUT_DIR = Path("output")
 RECURSIVE = False  # Set True to include videos in subfolders.

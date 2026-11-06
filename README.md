@@ -52,18 +52,21 @@ The encoder list should contain `libx265`.
 python main.py "D:/Videos"
 ```
 
+By default, converted videos are saved in a `compressed` folder inside the
+source folder. To choose another output folder:
+```bash
+python main.py "D:/Videos" --output "D:/Compressed"
+```
+
 Choose 24 FPS for source videos above 32 FPS:
 ```bash
 python main.py "D:/Videos" --fps 24
 ```
 
-Choose a custom output folder:
-```bash
-python main.py "D:/Videos" --output "D:/Compressed"
-```
-
-Output files are written as `<original_name>_compressed.mp4`.
-Original files are not modified. Logs are saved in `logs/compressor.log`.
+Converted files keep the original filename and extension. Files already present
+in the output folder are skipped, and the output folder must differ from the
+source folder. Original files are not modified. Logs are saved in
+`logs/compressor.log`.
 
 ## Encoding behavior
 

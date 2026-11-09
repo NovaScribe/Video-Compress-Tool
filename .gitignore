@@ -1,0 +1,11 @@
+# Ignore all files and folders by default.
+*
+
+# Allow only the files needed to build, run, and document this project.
+!/.gitignore
+!/README.md
+!/main.py
+!/compressor.py
+!/config.py
+!/video_probe.py
+!/requirements.txt

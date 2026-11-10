@@ -9,3 +9,7 @@
 !/config.py
 !/video_probe.py
 !/requirements.txt
+!VMAF_batch.bat
+!VMAF_tool.bat
+!vmaf_batch.py
+!VMAF_tool.py

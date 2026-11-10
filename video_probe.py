@@ -27,7 +27,14 @@ def probe_video(path: Path) -> dict:
         "stream=width,height,avg_frame_rate,r_frame_rate,bit_rate:stream_tags=rotate:stream_side_data=rotation",
         "-of", "json", str(path),
     ]
-    result = subprocess.run(command, capture_output=True, text=True, check=True)
+    result = subprocess.run(
+        command, capture_output=True, text=True, encoding="utf-8", errors="replace"
+    )
+    if result.returncode != 0:
+        raise RuntimeError(
+            f"Could not inspect {path} with ffprobe:\n{result.stderr.strip()}"
+        )
+
     data = json.loads(result.stdout)
     streams = data.get("streams", [])
     if not streams:

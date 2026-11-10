@@ -10,14 +10,16 @@ MIN_BITRATE = 10_000_000
 
 # Target and peak bitrates for 1080p HEVC.
 VIDEO_BITRATE = {
-    "horizontal": "8M",
-    "vertical": "6M",
+    "horizontal": "7M",
+    "vertical": "5M",
 }
+
 # Slightly higher targets for NVENC; libx265 continues using VIDEO_BITRATE.
 NVENC_VIDEO_BITRATE = {
-    "horizontal": "9M",
-    "vertical": "7M",
+    "horizontal": "7M",
+    "vertical": "5M",
 }
+
 MAX_BITRATE = {
     "horizontal": "12M",
     "vertical": "10M",
@@ -29,9 +31,13 @@ BUFFER_SIZE = {
 
 AUDIO_BITRATE = "256k"
 AUDIO_CODEC = "aac"
-VIDEO_CODEC = "hevc_nvenc"  # Choose "libx265" (CPU) or "hevc_nvenc" (NVIDIA GPU).
+
+# Choose "libx265" (CPU) or "hevc_nvenc" (NVIDIA GPU).
+# VIDEO_CODEC = "libx265"
+VIDEO_CODEC = "hevc_nvenc"
+
 X265_PRESET = "medium"
-NVENC_PRESET = "p5"
+NVENC_PRESET = "p7"
 NVENC_MULTIPASS = "fullres"
 
 INPUT_EXTENSIONS = {

@@ -37,7 +37,7 @@ def compress_video(source: Path, destination: Path, info: dict, fps_target: int)
     elif VIDEO_CODEC == "hevc_nvenc":
         preset = NVENC_PRESET
         two_pass = False
-        workflow = f"2-pass ({NVENC_MULTIPASS})"
+        workflow = f"single encode, NVENC multipass={NVENC_MULTIPASS}"
     else:
         raise ValueError(
             f"Unsupported video codec {VIDEO_CODEC!r}; "
@@ -65,13 +65,40 @@ def compress_video(source: Path, destination: Path, info: dict, fps_target: int)
         "-maxrate", maxrate,
         "-bufsize", bufsize,
         *(["-multipass", NVENC_MULTIPASS] if VIDEO_CODEC == "hevc_nvenc" else []),
+        *(
+            [
+                "-rc-lookahead", "20",
+                "-spatial-aq", "1",
+                "-bf", "0",
+            ]
+            if VIDEO_CODEC == "hevc_nvenc"
+            else []
+        ),
         "-pix_fmt", "yuv420p",
         "-fps_mode", "passthrough",
         "-tag:v", "hvc1",
     ]
 
-    logging.info("Encoding %s -> %s | HEVC %s %s | target %s",
-                 source.name, destination.name, VIDEO_CODEC, workflow, bitrate)
+    max_width, max_height = (
+        PORTRAIT_MAX if orientation == "vertical" else LANDSCAPE_MAX
+    )
+    input_bitrate = info.get("bitrate")
+    input_bitrate_text = (
+        f"{input_bitrate / 1_000_000:.2f} Mbps"
+        if input_bitrate is not None
+        else "unknown"
+    )
+    output_fps = fps_target if info["reduce_fps"] else info["fps"]
+
+    #logging.info("Encoding: %s -> %s", source, destination)
+    logging.info(
+        "Settings: input %dx%d @ %.3f FPS, %s -> output up to %dx%d @ %.3f FPS, "
+        "%s (%s), %s, video %s target / %s max, %s buffer, audio %s %s",
+        info["width"], info["height"], info["fps"], input_bitrate_text,
+        max_width, max_height, output_fps,
+        VIDEO_CODEC, preset, workflow, bitrate, maxrate, bufsize,
+        AUDIO_CODEC, AUDIO_BITRATE,
+    )
 
     try:
         if two_pass:
@@ -122,4 +149,4 @@ def compress_video(source: Path, destination: Path, info: dict, fps_target: int)
         destination.unlink(missing_ok=True)
         raise
 
-    logging.info("Created: %s", destination)
+    #logging.info("Created: %s", destination)

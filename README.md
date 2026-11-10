@@ -9,9 +9,7 @@ Batch compress videos in a folder to H.265/HEVC using either CPU (`libx265`) or 
 - FFmpeg and ffprobe available on PATH
 - An FFmpeg build that includes `libx265`; `hevc_nvenc` is also needed to use an
   NVIDIA GPU.
-
-The GTX 1050 is a Pascal-generation GPU and supports hardware HEVC encoding.
-Actual availability depends on the installed driver and FFmpeg build.
+- An FFmpeg build that includes the `libvmaf` filter to run quality comparisons.
 
 ## 1. Create and activate a virtual environment
 
@@ -45,11 +43,13 @@ Check:
 ffmpeg -hide_banner -encoders
 ffmpeg -hide_banner -h encoder=libx265
 ffmpeg -hide_banner -h encoder=hevc_nvenc
+ffmpeg -hide_banner -filters
 ffprobe -version
 ```
 
 The encoder list should contain `libx265`; it must also contain `hevc_nvenc`
-when using NVIDIA encoding.
+when using NVIDIA encoding. The filters list should contain `libvmaf` to use
+the quality comparison module.
 
 ## 3. Run
 
@@ -105,3 +105,17 @@ the values in `config.py`. For smaller files, lower them gradually and test.
 - You can adjust the encoder-specific preset in `config.py` to trade encoding
   speed for compression efficiency.
 - Some unusual variable-frame-rate files may report an approximate FPS.
+
+## Compare quality with VMAF
+
+Compare a compressed video against its original reference:
+
+```bash
+python scorecheck.py "D:/Videos/original.mp4" "D:/Videos/compressed/original.mp4"
+```
+
+The module reports the mean VMAF score, the minimum and maximum frame scores,
+and the number of frames compared. It scales the compressed video to the
+original's display dimensions, aligns both videos' start timestamps, and stops
+at the end of the shorter video. VMAF measures video similarity only; it does
+not compare audio.
